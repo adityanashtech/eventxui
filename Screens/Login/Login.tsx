@@ -12,12 +12,14 @@ import Animated, { FadeInUp } from "react-native-reanimated";
 import { useAuth } from "../../Context/AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
+import { Ionicons } from "@expo/vector-icons";
 
 const LoginPage = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [secureText, setSecureText] = useState(true);
 
   const { login } = useAuth();
 
@@ -99,7 +101,11 @@ const LoginPage = ({ navigation }) => {
     return true;
   };
 
-  const isDisabled = !email.trim().length || password.length < 3 || !!emailError.length || !!passwordError.length;
+  const isDisabled =
+    !email.trim().length ||
+    password.length < 3 ||
+    !!emailError.length ||
+    !!passwordError.length;
 
   return (
     <View style={styles.container}>
@@ -141,17 +147,25 @@ const LoginPage = ({ navigation }) => {
             <Text style={styles.errorText}>{emailError}</Text>
           ) : null}
 
-          <View style={styles.inputContainer}>
+          <View style={styles.passwordContainer}>
             <TextInput
               placeholder="Password"
-              placeholderTextColor={"gray"}
+              placeholderTextColor="gray"
               onChangeText={(text) => {
                 setPassword(text);
                 validatePassword(text);
               }}
               value={password}
-              secureTextEntry
+              secureTextEntry={secureText}
+              style={{ flex: 1 }}
             />
+            <TouchableOpacity onPress={() => setSecureText(!secureText)}>
+              <Ionicons
+                name={secureText ? "eye-off" : "eye"}
+                size={24}
+                color="gray"
+              />
+            </TouchableOpacity>
           </View>
           {passwordError ? (
             <Text style={styles.errorText}>{passwordError}</Text>
@@ -230,6 +244,14 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 15,
     width: "100%",
+  },
+  passwordContainer: {
+    backgroundColor: "rgb(245 245 244)",
+    padding: 12,
+    borderRadius: 15,
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
   },
   errorText: {
     color: "red",
